@@ -1,5 +1,5 @@
 //require system functions
-var fs    = require("fs")
+    fs    = require("fs")
    ,path  = require("path")
    ,sys   = require('sys')
 
@@ -7,19 +7,18 @@ var fs    = require("fs")
 require.paths.unshift('vendor/express/lib')
 require('express')
 require('express/plugins')
+Object.merge(global, require('express/plugins/auth'));
 utils = require('express/utils')
 http = require('express/http')
 
-configure(function(){
-  use(Logger)
-  use(MethodOverride)
-  use(ContentLength)
-  use(Cookie)
-  use(Cache, { lifetime: (5).minutes, reapInterval: (1).minute })
-  use(Session, { lifetime: (15).minutes, reapInterval: (1).minute })
-  use(Static)
-  set('root', __dirname)
-})
+use(Logger)
+use(MethodOverride)
+use(ContentLength)
+use(Cookie)
+use(Cache, { lifetime: (5).minutes, reapInterval: (1).minute })
+use(Session, { lifetime: (15).minutes, reapInterval: (1).minute })
+use(Static)
+set('root', __dirname)
 
 fs.treeSync = function (root) {
   var s = fs.lstatSync(root)
@@ -39,8 +38,24 @@ fs.treeSync = function (root) {
   return s
 }
 
+fs.treeSync(path.join(__dirname, "system/libraries"))
+fs.treeSync(path.join(__dirname, "system/configs"))
+fs.treeSync(path.join(__dirname, "system/database"))
+
+var getPasswordForUserFunction= function(user,  callback) {
+  var result;
+  if( user == 'foo' ) result= 'bar';
+  callback(null, result);
+}
+
+var StrategyDefinition= require('express/plugins/strategyDefinition').StrategyDefinition;
+use(Auth, {strategies:{"anon": new StrategyDefinition(Anonymous),
+                       "never": new StrategyDefinition(Never),
+                       "http": new StrategyDefinition(Http, {getPasswordForUser: getPasswordForUserFunction}),
+                       "basic": new StrategyDefinition(Basic, {getPasswordForUser: getPasswordForUserFunction}),
+                       "digest": new StrategyDefinition(Digest, {getPasswordForUser: getPasswordForUserFunction})}})
+
 //server = run(3000,'local.cj.nu')
 server = run()
 
-fs.treeSync(path.join(__dirname, "system"))
 fs.treeSync(path.join(__dirname, "application"))

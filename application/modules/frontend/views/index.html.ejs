@@ -1,0 +1,21 @@
+		<div align="center" style="width: 100%;">
+				<div class="formbox" id="formbox-login">
+					<h1>SD API Login</h1>
+
+					<form action="/login" id="form-login" method="post" style="width: 400px;"><fieldset>
+					<input type="hidden" name="task" value="login" />
+
+          					<ol><li>
+						<label for="form-login-username">Username</label>
+						<input class="text" id="form-login-username" maxlength="255" name="username" size="25" tabindex="1" type="text" value="" />
+					</li><li>
+						<label for="form-login-password">Password</label>
+						<input class="text" id="form-login-password" maxlength="16" name="password" size="25" tabindex="2" type="password" value="" />
+						<span class="ajax">Email or password was invalid.</span>
+
+					</li><li>
+						<input class="submit" tabindex="3" type="submit" value="Log In" />
+					</li></ol>
+					</fieldset></form>
+				</div>
+		</div>
